@@ -42,8 +42,8 @@ public class PdfController {
 			
 		    StringBuilder sb = new StringBuilder();
 		    String line = br.readLine();
-		    
-		    if(true) {
+		    boolean bool=true;
+		    if(bool) {
 		    while (line != null) {
 		        sb.append(line);
 		        sb.append("\n");
