@@ -32,6 +32,10 @@ function fileCheck(frm) {
    }
 
 }
+
+function gkgkgkgk(){
+	alert("안녕하신가");
+}
 </script>
 </head>
 <body>
@@ -47,7 +51,10 @@ function fileCheck(frm) {
 		  <td colspan="2"> <textarea cols="50" rows="20" name="Bookcontent" ></textarea></td>
 	    </tr> 	    
 	    <tr>
-	      <td>첨부 : </td><td><input type="file" name="BookFile"></td>
+	      <td>첨부 : </td><td><input type="file" onload="gkgkgkgk()" name="BookFile"></td>
+	    </tr>
+	    <tr style="display: ">
+	      <td>txt설정</td><td></td>
 	    </tr>
 	    <tr>
 	      <td><input type="button" onclick="fileCheck(this.form)" value="글쓰기"></td>

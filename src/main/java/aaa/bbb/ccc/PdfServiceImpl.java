@@ -27,9 +27,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class PdfServiceImpl implements PdfService{
-
+	
+	
+	public void fileFilter() {
+		
+	}
+	
+	
 	@Override
-	public void write() {
+	public void txtWrite() {
 		try {
 			
 		
@@ -82,7 +88,7 @@ public class PdfServiceImpl implements PdfService{
 		return page;
 	}
 	
-	public void writePdf(MultipartFile mFile) {
+	public void pdfWrite(MultipartFile mFile) {
 		try {
 			String sourceDir = "D:/temp/"; // Pdf files are read from this folder
 			String destinationDir = "D:/temp/Converted_PdfFiles_to_Image/"; // converted images from pdf document are
