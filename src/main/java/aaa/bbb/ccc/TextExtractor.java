@@ -45,7 +45,7 @@ public class TextExtractor {
 					}
 				}
 			}
-			line = br.readLine();
+			line += br.readLine();
 		}
 		System.out.println(sb.toString());
 		br.close();
