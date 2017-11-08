@@ -42,7 +42,7 @@ public class PdfController {
 	PdfService pdfService;
 
 	
-	@RequestMapping(value="/write.bbs",method=RequestMethod.GET)
+	@RequestMapping(value="/check.bbs",method=RequestMethod.GET)
 	public String text(){
 		
 		return "writeForm";
@@ -50,12 +50,23 @@ public class PdfController {
 	
 	
 	
-	@RequestMapping(value="/write.bbs",method=RequestMethod.POST)
-	public String write(String bookTitle,String bookContent,
-						@RequestPart("BookFile") MultipartFile mFile){
+//	@RequestMapping(value="/write.bbs",method=RequestMethod.POST)
+//	public String write(String bookTitle,String bookContent,
+//						@RequestPart("BookFile") MultipartFile mFile){
+//		
+//		pdfService.pdfWrite(mFile);
+//		return "wrtie";
+//	}
+	
+	@RequestMapping(value="/check.bbs",method=RequestMethod.POST)
+	public String check(@RequestParam("line")String line){
+			
+				
+			
+				System.out.println("+++++++++"+line);
 		
-		pdfService.pdfWrite(mFile);
-		return "wrtie";
+		
+		return "writeFrom";
 	}
 	
 }
