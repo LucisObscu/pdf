@@ -42,7 +42,7 @@ public class PdfController {
 	PdfService pdfService;
 
 	
-	@RequestMapping(value="/check.bbs",method=RequestMethod.GET)
+	@RequestMapping(value="/write.bbs",method=RequestMethod.GET)
 	public String text(){
 		
 		return "writeForm";
@@ -59,11 +59,11 @@ public class PdfController {
 //	}
 	
 	@RequestMapping(value="/check.bbs",method=RequestMethod.POST)
-	public String check(@RequestParam("line")String line){
+	public String check(PdfFileDto fileDto){
+			
+				pdfService.check(fileDto.getBookFile());
 			
 				
-			
-				System.out.println("+++++++++"+line);
 		
 		
 		return "writeFrom";

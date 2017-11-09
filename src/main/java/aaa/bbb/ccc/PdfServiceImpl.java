@@ -34,6 +34,24 @@ public class PdfServiceImpl implements PdfService{
 	}
 	
 	
+	
+	
+	@Override
+	public void check(MultipartFile BookFile) {
+		String originalName=BookFile.getOriginalFilename();
+		String formatName = originalName.substring(originalName.lastIndexOf(".")+1);
+		if(formatName.equalsIgnoreCase("txt")) {
+			System.out.println("++++++++++++++"+"txt:"+formatName);
+		}else if(formatName.equalsIgnoreCase("pdf")) {
+			pdfWrite(BookFile);
+		}else{
+			
+		}
+	}
+
+
+
+
 	@Override
 	public void txtWrite() {
 		try {
