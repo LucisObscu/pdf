@@ -58,15 +58,16 @@ public class PdfController {
 //		return "wrtie";
 //	}
 	
-	@RequestMapping(value="/check.bbs",method=RequestMethod.POST)
-	public String check(PdfFileDto fileDto){
-			
-				pdfService.check(fileDto.getBookFile());
-			
+	@RequestMapping(value="/write.bbs",method=RequestMethod.POST)
+	public String write(PdfFileDto fileDto)throws Exception{
+		String view=null; 
+				view=pdfService.check(fileDto.getBookFile(),fileDto.getLine());
+			if(view==null) {
+				view="write";
+			}
 				
 		
-		
-		return "writeFrom";
+		return view;
 	}
 	
 }

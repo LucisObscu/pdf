@@ -37,27 +37,31 @@ public class PdfServiceImpl implements PdfService{
 	
 	
 	@Override
-	public void check(MultipartFile BookFile) {
-		String originalName=BookFile.getOriginalFilename();
-		String formatName = originalName.substring(originalName.lastIndexOf(".")+1);
-		if(formatName.equalsIgnoreCase("txt")) {
-			System.out.println("++++++++++++++"+"txt:"+formatName);
-		}else if(formatName.equalsIgnoreCase("pdf")) {
-			pdfWrite(BookFile);
-		}else{
-			
-		}
+	public String check(MultipartFile BookFile,String line)throws Exception {
+		String error=null;
+		System.out.println("++++++++++++++"+line);
+			if(line.equalsIgnoreCase("1")||line.equalsIgnoreCase("2")){
+				error=txtWrite(BookFile,line);
+			}else{
+				error=pdfWrite(BookFile);
+			}
+		
+
+		return error;
 	}
 
 
 
 
-	@Override
-	public void txtWrite() {
-		try {
+	/*@Override
+	public String txtWrite(MultipartFile BookFile,String lineNum)throws Exception {
+//		try {
 			
-		
-		BufferedReader br = new BufferedReader(new FileReader("D:/temp/gggg.txt")); //Read .txt file
+		String stord="D:/temp/";
+		String oldFileName=BookFile.getOriginalFilename();
+		BookFile.transferTo(new File(stord+oldFileName));
+		BufferedReader br = new BufferedReader(new FileReader(stord+oldFileName)); //Read .txt file
+		//D:/temp/gggg.txt
 		int numOfOneLine = 3;	// Number of one line
 		int lineOfOnePage = 3;	// Number of lines of One page
 		int page = 1;	// For count pages
@@ -81,22 +85,27 @@ public class PdfServiceImpl implements PdfService{
 			}
 			numOfEnter = StringUtils.countOccurrencesOf(sb.toString(), "\r\n");
 			if(numOfEnter >= lineOfOnePage) {
-				page = write(page,sb); // Write and return the number of page for increase
+				page = write(page,sb,oldFileName); // Write and return the number of page for increase
 			}
 					
 		} // Exit when line is not exist
-		write(page,sb); // Write the left text 
+		write(page,sb,oldFileName); // Write the left text 
 		br.close();
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+//		} catch (Exception e) {
+//			
+//			return "500";
+//		}
+		return null;
 	}
 	
-	public static int write(int page, StringBuilder sb) throws Exception{
+	
+	
+	public static int write(int page, StringBuilder sb,String oldFileName) throws Exception{
 		if(sb.toString().equals("\r\n")) {System.out.println("\\r\\n");return page;}
 		if(sb.toString().equals("")) {System.out.println("space");return page;}
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("d:/temp/gggg" + page + ".txt")));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("d:/temp/"+oldFileName+ page + ".txt")));
 		String withoutLastEnter = sb.toString().substring(0, sb.toString().lastIndexOf("\r\n"));
+		System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"+withoutLastEnter);
 		bw.write(withoutLastEnter);
 		bw.flush();
 		bw.close();
@@ -104,22 +113,69 @@ public class PdfServiceImpl implements PdfService{
 		sb.setLength(0);
 		page++;
 		return page;
+	}*/
+	
+	
+	public String txtWrite(MultipartFile BookFile,String lineNum)throws Exception {
+		String stord="D:/temp/";
+		String oldFileName=BookFile.getOriginalFilename();
+		BookFile.transferTo(new File(stord+oldFileName));
+		BufferedReader br = new BufferedReader(new FileReader(stord+oldFileName)); //Read .txt file
+		int numOfOneLine = 3;	// Number of one line
+		int lineOfOnePage = 3;	// Number of lines of One page
+		int page = 1;	// For count pages
+		int numOfEnter;	// For search the number of Enter
+		StringBuilder sb = new StringBuilder();
+		String line = br.readLine(); // Read one line
+		while (line != null) { // While line is exist
+			if (line.length() <= numOfOneLine) { 
+				sb.append(line + "\r\n");
+				line = br.readLine();	// Read next line when current line is lesser than numOfOneLine 
+			} else {
+				sb.append(line.substring(0, numOfOneLine) + "\r\n");
+				line = line.substring(numOfOneLine); // Cut line and reunite
+				
+			}
+			numOfEnter = StringUtils.countOccurrencesOf(sb.toString(), "\r\n");
+			if(numOfEnter >= lineOfOnePage) {
+				page = write(page,sb,oldFileName); // Write and return the number of page for increase
+			}
+					
+		} // Exit when line is not exist
+		write(page,sb,oldFileName); // Write the left text 
+		br.close();
+		return null;
+	}
+	public static int write(int page, StringBuilder sb,String oldFileName) throws Exception{
+		if(sb.toString().equals("\r\n")) {System.out.println("\\r\\n");return page;}
+		if(sb.toString().equals("")) {System.out.println("space");return page;}
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("d:/temp/" + page + oldFileName)));
+		String withoutLastEnter = sb.toString().substring(0, sb.toString().lastIndexOf("\r\n"));
+		bw.write(withoutLastEnter);
+		bw.flush();
+		bw.close();
+		System.out.println("sb : " + withoutLastEnter);
+		sb.setLength(0);
+		page++;
+		return page;
 	}
 	
-	public void pdfWrite(MultipartFile mFile) {
+	public String pdfWrite(MultipartFile mFile) {
+		File destinationFile =null;
+		String sourceDir = "D:/temp/"; // Pdf files are read from this folder
+		String destinationDir = "D:/temp/Converted_PdfFiles_to_Image/"; // converted images from pdf document are
+																		// saved here
+		String oldFileName = mFile.getOriginalFilename();
 		try {
-			String sourceDir = "D:/temp/"; // Pdf files are read from this folder
-			String destinationDir = "D:/temp/Converted_PdfFiles_to_Image/"; // converted images from pdf document are
-																			// saved here
 			
-			String oldFileName = mFile.getOriginalFilename();
+			
 			mFile.transferTo(new File(sourceDir+oldFileName));
 			Long startTime = System.currentTimeMillis();
 			System.out.println(startTime);
 
 			File sourceFile = new File(sourceDir + oldFileName);
 			//							D:/temp/+gameOfThrone.pdf
-			File destinationFile = new File(destinationDir + oldFileName);
+			destinationFile = new File(destinationDir + oldFileName);
 				//						D:/temp/Converted_PdfFiles_to_Image/+gameOfThrone.pdf
 			if (!destinationFile.exists()) {
 				destinationFile.mkdirs();
@@ -128,7 +184,9 @@ public class PdfServiceImpl implements PdfService{
 			if (sourceFile.exists()) {
 				
 				System.out.println("Images copied to Folder: " + destinationFile.getName());
+				
 				PDDocument document = PDDocument.load(sourceFile);
+
 //				PdfImageCounter counter = new PdfImageCounter();
 //				counter.countImagesWithProcessor(document);
 				PDFRenderer pdfRenderer = new PDFRenderer(document);
@@ -228,7 +286,7 @@ public class PdfServiceImpl implements PdfService{
 			            	
 			            	
 			            	
-			            	
+							
 			            	
 			            	
 			            	
@@ -259,14 +317,17 @@ public class PdfServiceImpl implements PdfService{
 					pageCounter++;
 				}
 				document.close();
-				
 				System.out.println("걸린시간 : " + (System.currentTimeMillis() - startTime));
 				System.out.println("Converted Images are saved at -> " + destinationFile.getAbsolutePath());
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			File file = new File(sourceDir + oldFileName);
+			file.delete();
+			destinationFile.delete();
+			return "500";
 		}
+		return null;
 	}
 	
 }

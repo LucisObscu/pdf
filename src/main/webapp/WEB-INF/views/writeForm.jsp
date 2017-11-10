@@ -40,8 +40,10 @@ function gkgkgkgk(BookFile){
 	if(BookFile.value.match(FileFilter)){
 		let html="<td>txt설정</td><td>기존 줄바꿈 삭제<input type='checkbox' onclick='kokoko()' id='linener' name='linener'></td>"
 			$("#setting").html(html);
+		$("#line").val("2");
 	}else{
-		
+		$("#line").val("3");
+		$("#setting").html("");
 	}
 	
 }
@@ -72,7 +74,7 @@ function kokoko(){
 </script>
 </head>
 <body>
-<form action="/ccc/check.bbs" method="post" enctype="multipart/form-data">
+<form action="/ccc/write.bbs" method="post" enctype="multipart/form-data">
 	<input type="hidden" id="line" name="line" value="3">
 	<table border="2" width="200">  
 		<tr>
