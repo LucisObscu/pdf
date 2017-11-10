@@ -59,18 +59,7 @@ function kokoko(){
 	 	}
 	
 }
-// $(function(){
-// 	$("#checkBoxId").on("click",function(){
-// 		alert("check박스?!");
-// 		if($("#checkBoxId").is(":checked")){
-// 			alert("체크박스 체크했음!");
-// 			$("input[name=line]").val("1")
-// 		}else{
-// 			alert("체크박스 체크 해제!");
-// 			$("input[name=line]").val("2")
-// 		}
-// 	});
-// });
+
 </script>
 </head>
 <body>

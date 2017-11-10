@@ -47,16 +47,7 @@ public class PdfController {
 		
 		return "writeForm";
 	}
-	
-	
-	
-//	@RequestMapping(value="/write.bbs",method=RequestMethod.POST)
-//	public String write(String bookTitle,String bookContent,
-//						@RequestPart("BookFile") MultipartFile mFile){
-//		
-//		pdfService.pdfWrite(mFile);
-//		return "wrtie";
-//	}
+
 	
 	@RequestMapping(value="/write.bbs",method=RequestMethod.POST)
 	public String write(PdfFileDto fileDto)throws Exception{
