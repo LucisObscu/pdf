@@ -5,8 +5,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class PdfFileDto {
 	private MultipartFile BookFile;
 	private MultipartFile BookImg;
-	private String line;
-	
+	private int line;
+	private int numOfOneLine;
+	private int lineOfOnePage;
 	public MultipartFile getBookFile() {
 		return BookFile;
 	}
@@ -19,12 +20,26 @@ public class PdfFileDto {
 	public void setBookImg(MultipartFile bookImg) {
 		BookImg = bookImg;
 	}
-	public String getLine() {
+	public int getLine() {
 		return line;
 	}
-	public void setLine(String line) {
+	public void setLine(int line) {
 		this.line = line;
 	}
+	public int getNumOfOneLine() {
+		return numOfOneLine;
+	}
+	public void setNumOfOneLine(int numOfOneLine) {
+		this.numOfOneLine = numOfOneLine;
+	}
+	public int getLineOfOnePage() {
+		return lineOfOnePage;
+	}
+	public void setLineOfOnePage(int lineOfOnePage) {
+		this.lineOfOnePage = lineOfOnePage;
+	}
+	
+	
 	
 	
 }

@@ -4,6 +4,14 @@
 <head>
 <meta charset="utf-8">
 <title>글쓰기</title>
+<!-- 합쳐지고 최소화된 최신 CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+<!-- 부가적인 테마 -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+<!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script>
 function fileCheck(frm) {   
@@ -38,7 +46,10 @@ function gkgkgkgk(BookFile){
 	
 	var FileFilter = /\.(txt)$/i;
 	if(BookFile.value.match(FileFilter)){
-		let html="<td>txt설정</td><td>기존 줄바꿈 삭제<input type='checkbox' onclick='kokoko()' id='linener' name='linener'></td>"
+		let html="<td>txt설정</td><td>기존 줄바꿈 삭제<input type='checkbox' onclick='kokoko()' id='linener' name='linener'>"
+			+"<br>라인글자수<input  type='number'  class='numOfOneLine' name='numOfOneLine' onblur='lineText()'><br>"
+			+"줄바꿈<input type='number' class='lineOfOnePage' name='lineOfOnePage' onblur='pageText()'>"
+		+"</td>"
 			$("#setting").html(html);
 		$("#line").val("2");
 	}else{
@@ -60,6 +71,26 @@ function kokoko(){
 	
 }
 
+function image(){
+	
+}
+
+function lineText(){
+	var lineText =$(".numOfOneLine").val();
+	if(lineText<30||lineText>50){
+		alert("111");
+		$(".numOfOneLine").val(30);
+	}
+}
+
+function pageText(){
+	var pageText =$(".lineOfOnePage").val();
+	if(pageText<30||pageText>50){
+		alert("111");
+		$(".lineOfOnePage").val(30);
+	}
+}
+
 </script>
 </head>
 <body>
@@ -78,12 +109,15 @@ function kokoko(){
 	    <tr>
 	      <td>첨부 : </td><td><input type="file"  onchange="gkgkgkgk(BookFile)"  name="BookFile"></td>
 	    </tr>
-	    <tr id="setting"></tr>
+	    <tr id="setting"><td></td></tr>
 	    <tr>
 	      <td><input type="button" onclick="fileCheck(this.form)" value="글쓰기"></td>
 	      <td><input type="reset" value="글쓰기취소"></td>
 	    </tr>		
-	</table>	
+	</table>
+	<div class="image" id="image" ondrag="image">
+		<img alt="" src="">
+	</div>	
 </form>
 </body>
 </html>

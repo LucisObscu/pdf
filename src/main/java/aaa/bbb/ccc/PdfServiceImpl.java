@@ -28,24 +28,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class PdfServiceImpl implements PdfService{
-	
-	
-	public void fileFilter() {
-		
-	}
-	
-	
-	
-	
+
 	@Override
-	public String check(MultipartFile BookFile,String line)throws Exception {
+	public String check(PdfFileDto fileDto)throws Exception {
 //		Files.probeContentType()
 		String error=null;
-		System.out.println("++++++++++++++"+line);
-			if(line.equalsIgnoreCase("1")||line.equalsIgnoreCase("2")){
-				error=txtWrite(BookFile,line);
+		int line=fileDto.getLine();
+			if(line==1||line==2){
+				error=txtWrite(fileDto.getBookFile(),line,
+						fileDto.getNumOfOneLine(),fileDto.getLineOfOnePage());
 			}else{
-				error=pdfWrite(BookFile);
+				error=pdfWrite(fileDto.getBookFile());
 			}
 		
 
@@ -53,28 +46,44 @@ public class PdfServiceImpl implements PdfService{
 	}
 
 
-	public String txtWrite(MultipartFile BookFile,String lineNum){
+	public String txtWrite(MultipartFile BookFile,int lineNum,int numLine,int linePage){
 		String stord="D:/temp/";
 		String oldFileName=BookFile.getOriginalFilename();
 		BufferedReader br=null;
+		File destinationFile =null;
+		int numOfOneLine = 0;	
+		int lineOfOnePage = 0;
+		String destinationDir = "D:/temp/Converted_txt/";
+		destinationFile = new File(destinationDir + oldFileName+"/"+ oldFileName);
+	if (!destinationFile.exists()) {
+		destinationFile.mkdirs();
+	}
 		try {
-		BookFile.transferTo(new File(stord+oldFileName));
-		br = new BufferedReader(new FileReader(stord+oldFileName)); //Read .txt file
+		BookFile.transferTo(new File(destinationDir + oldFileName+"/"+ oldFileName));
+		br = new BufferedReader(new FileReader(destinationDir + oldFileName+"/"+ oldFileName)); //Read .txt file
+		if(numLine==0) {
+			numOfOneLine=30;
+		}else {
+			numOfOneLine = numLine;	// Number of one line
+		}
+		if(linePage==0) {
+			lineOfOnePage=30;
+		}else {
+			lineOfOnePage = linePage;	// Number of lines of One page
+		}
 		
-		int numOfOneLine = 3;	// Number of one line
-		int lineOfOnePage = 3;	// Number of lines of One page
 		int page = 1;	// For count pages
 		int numOfEnter;	// For search the number of Enter
 		StringBuilder sb = new StringBuilder();
 		String line = br.readLine(); // Read one line
+		
 		while (line != null) { // While line is exist
-			if (line.length() <= numOfOneLine) { 
+			if (line.length() <= numOfOneLine) {
 				sb.append(line + "\r\n");
 				line = br.readLine();	// Read next line when current line is lesser than numOfOneLine 
 			} else {
 				sb.append(line.substring(0, numOfOneLine) + "\r\n");
 				line = line.substring(numOfOneLine); // Cut line and reunite
-				
 			}
 			numOfEnter = StringUtils.countOccurrencesOf(sb.toString(), "\r\n");
 			if(numOfEnter >= lineOfOnePage) {
@@ -82,17 +91,18 @@ public class PdfServiceImpl implements PdfService{
 			}
 					
 		} // Exit when line is not exist
+		
 		write(page,sb,oldFileName); // Write the left text 
 		br.close();
 		}catch (Exception e) {
-			return "500";
+//			return "500";
 		}
 		return null;
 	}
 	public static int write(int page, StringBuilder sb,String oldFileName) throws Exception{
 		if(sb.toString().equals("\r\n")) {System.out.println("\\r\\n");return page;}
 		if(sb.toString().equals("")) {System.out.println("space");return page;}
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("d:/temp/" + page + oldFileName)));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("D:/temp/Converted_txt/"+oldFileName+"/"+ page + oldFileName)));
 		String withoutLastEnter = sb.toString().substring(0, sb.toString().lastIndexOf("\r\n"));
 		bw.write(withoutLastEnter);
 		bw.flush();
@@ -170,11 +180,6 @@ public class PdfServiceImpl implements PdfService{
 					fos3.close();
 					
 					
-					
-					
-					
-					
-					
 					PDFTextStripper reader = new PDFTextStripper();
 					reader.setStartPage(pageNumber);
 					reader.setEndPage(pageNumber);
@@ -225,12 +230,6 @@ public class PdfServiceImpl implements PdfService{
 							bos4.write(imageInByteSa);
 							bos4.close();
 							fos4.close();
-			            	
-			            	
-			            	
-			            	
-							
-			            	
 			            	
 			            	
 			                imageCount++;

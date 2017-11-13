@@ -52,7 +52,7 @@ public class PdfController {
 	@RequestMapping(value="/write.bbs",method=RequestMethod.POST)
 	public String write(PdfFileDto fileDto)throws Exception{
 		String view=null; 
-				view=pdfService.check(fileDto.getBookFile(),fileDto.getLine());
+				view=pdfService.check(fileDto);
 			if(view==null) {
 				view="write";
 			}
