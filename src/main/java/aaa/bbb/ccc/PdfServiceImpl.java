@@ -5,10 +5,12 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.nio.file.Files;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 import javax.imageio.ImageIO;
 
@@ -47,20 +49,34 @@ public class PdfServiceImpl implements PdfService{
 
 
 	public String txtWrite(MultipartFile bookFile,int lineNum,int numLine,int linePage){
+		try {
 		String stord="D:/temp/";
 		String oldFileName=bookFile.getOriginalFilename();
+		//BufferedReader br=null;
 		BufferedReader br=null;
 		File destinationFile =null;
 		int numOfOneLine = 0;	
 		int lineOfOnePage = 0;
 		String destinationDir = "D:/temp/Converted_txt/";
+		System.out.println("aaaaaaaaaaaaaaaaaaaa"+oldFileName);
 		destinationFile = new File(destinationDir + oldFileName+"/"+ oldFileName);
-	if (!destinationFile.exists()) {
+	if (destinationFile.isDirectory()) {
+
+		
+	}else {
 		destinationFile.mkdirs();
 	}
-		try {
+//	Writer myWriter= new BufferedWriter(new OutputStreamWriter(
+//		    new FileOutputStream(oldFileName), "UTF-8"));
+//		try {
+//		    myWriter.write(destinationDir + oldFileName+"/"+ oldFileName);
+//		} catch(Exception e){
+//		e.printStackTrace();
+//		}
+		
 		bookFile.transferTo(new File(destinationDir + oldFileName+"/"+ oldFileName));
-		br = new BufferedReader(new FileReader(destinationDir + oldFileName+"/"+ oldFileName)); //Read .txt file
+		//br = new BufferedReader(new FileReader(destinationDir + oldFileName+"/"+ oldFileName)); //Read .txt file
+		br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(destinationDir + oldFileName+"/"+ oldFileName)),"euc-kr"));
 		if(numLine==0) {
 			numOfOneLine=30;
 		}else {
@@ -103,9 +119,11 @@ public class PdfServiceImpl implements PdfService{
 	public static int write(int page, StringBuilder sb,String oldFileName) throws Exception{
 		if(sb.toString().equals("\r\n")) {System.out.println("\\r\\n");return page;}
 		if(sb.toString().equals("")) {System.out.println("space");return page;}
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("D:/temp/Converted_txt/"+oldFileName+"/"+ page + oldFileName)));
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File("D:/temp/Converted_txt/"+oldFileName+"/"+ page + oldFileName)),"euc-kr"));
 		String withoutLastEnter = sb.toString().substring(0, sb.toString().lastIndexOf("\r\n"));
-		bw.write(withoutLastEnter);
+//		bw.write(withoutLastEnter);
+		Writer wit=bw;
+		wit.write(withoutLastEnter);
 		bw.flush();
 		bw.close();
 		System.out.println("sb : " + withoutLastEnter);
