@@ -3,22 +3,23 @@ package aaa.bbb.ccc;
 import org.springframework.web.multipart.MultipartFile;
 
 public class PdfFileDto {
-	private MultipartFile BookFile;
-	private MultipartFile BookImg;
+	private MultipartFile bookFile;
+	private MultipartFile bookImg;
 	private int line;
 	private int numOfOneLine;
 	private int lineOfOnePage;
+	
 	public MultipartFile getBookFile() {
-		return BookFile;
+		return bookFile;
 	}
 	public void setBookFile(MultipartFile bookFile) {
-		BookFile = bookFile;
+		this.bookFile = bookFile;
 	}
 	public MultipartFile getBookImg() {
-		return BookImg;
+		return bookImg;
 	}
 	public void setBookImg(MultipartFile bookImg) {
-		BookImg = bookImg;
+		this.bookImg = bookImg;
 	}
 	public int getLine() {
 		return line;
@@ -38,6 +39,7 @@ public class PdfFileDto {
 	public void setLineOfOnePage(int lineOfOnePage) {
 		this.lineOfOnePage = lineOfOnePage;
 	}
+	
 	
 	
 	

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -16,17 +17,24 @@
 <script>
 function fileCheck(frm) {   
 
-  var file = frm.BookFile.value;
+  var file = frm.bookFile.value;
   var FileFilter = /\.(txt|pdf)$/i;
   var extArray = new Array(".txt", ".pdf");   
   var bSubmitCheck = false;
+  
+  var fileImg = frm.bookImg.value;
+  var FileImgFilter = /\.(jpg|png|jpeg)$/i;
+  var extImgArray = new Array(".jpg", ".png",".jpeg");   
     
   if( !file ){ 
     alert( "파일을 선택하여 주세요!");
     return;
+  }else if(!fileImg){
+	  alert( "이미지 파일을 선택하여 주세요!");
+	    return;
   }
   
-  if( frm.BookFile.value.match(FileFilter))
+  if( frm.bookFile.value.match(FileFilter)&&frm.bookImg.value.match(FileImgFilter))
   { 
     bSubmitCheck = true;
   }
@@ -36,19 +44,19 @@ function fileCheck(frm) {
      alert("파일 업로드를 시작합니다.");
      frm.submit(); 
    } else {
-     alert("다음 파일만 업로드가 가능합니다.\n\n"  + (extArray.join("  ")) + "\n\n 업로드할 파일을 "
+     alert("다음 파일만 업로드가 가능합니다.\n\n 파일:"  + (extArray.join("  ")) +"\n\n이미지파일:"  + (extImgArray.join("  ")) + "\n\n 업로드할 파일을 "
      + " 다시 선택하여 주세요.");
    }
 
 }
 
-function gkgkgkgk(BookFile){
+function gkgkgkgk(bookFile){
 	
 	var FileFilter = /\.(txt)$/i;
-	if(BookFile.value.match(FileFilter)){
+	if(bookFile.value.match(FileFilter)){
 		let html="<td>txt설정</td><td>기존 줄바꿈 삭제<input type='checkbox' onclick='kokoko()' id='linener' name='linener'>"
-			+"<br>라인글자수<input  type='number'  class='numOfOneLine' name='numOfOneLine' onblur='lineText()'><br>"
-			+"줄바꿈<input type='number' class='lineOfOnePage' name='lineOfOnePage' onblur='pageText()'>"
+			+"<br>라인글자수<input  type='number' value='30' class='numOfOneLine' name='numOfOneLine' onblur='lineText()'><br>"
+			+"줄바꿈<input type='number' value='30' class='lineOfOnePage' name='lineOfOnePage' onblur='pageText()'>"
 		+"</td>"
 			$("#setting").html(html);
 		$("#line").val("2");
@@ -101,13 +109,13 @@ function pageText(){
  			 <td>글쓴이 :</td><td>human</td>
  		</tr>
  		<tr>	 
-		 <td>제목 : </td><td><input type="txt" name="BookTitle" ></td>			 
+		 <td>제목 : </td><td><input type="txt" name="bookTitle" ></td>			 
 		</tr>
 		<tr>
-		  <td colspan="2"> <textarea cols="50" rows="20" name="Bookcontent" ></textarea></td>
+		  <td colspan="2"> <textarea cols="50" rows="20" name="bookcontent" ></textarea></td>
 	    </tr> 	    
 	    <tr>
-	      <td>첨부 : </td><td><input type="file"  onchange="gkgkgkgk(BookFile)"  name="BookFile"></td>
+	      <td>첨부 : </td><td><input type="file"  onchange="gkgkgkgk(bookFile)"  name="bookFile"></td>
 	    </tr>
 	    <tr id="setting"><td></td></tr>
 	    <tr>
@@ -115,9 +123,32 @@ function pageText(){
 	      <td><input type="reset" value="글쓰기취소"></td>
 	    </tr>		
 	</table>
-	<div class="image" id="image" ondrag="image">
-		<img alt="" src="">
-	</div>	
+	<section id="wrapper">
+<input type=file name="bookImg">
+<div id="holder"></div>	
 </form>
+
+
+<script>
+var upload = document.getElementsByName("hhh")[0],
+holder = document.getElementById('holder');
+
+upload.onchange = function (e) {
+e.preventDefault();
+
+var file = upload.files[0],
+  reader = new FileReader();
+reader.onload = function (event) {
+var img = new Image();
+img.src = event.target.result;
+img.width = 280;
+img.height = 412
+holder.innerHTML = '';
+holder.appendChild(img);
+};
+reader.readAsDataURL(file);
+return false;
+};
+</script>
 </body>
 </html>

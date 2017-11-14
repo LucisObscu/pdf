@@ -46,9 +46,9 @@ public class PdfServiceImpl implements PdfService{
 	}
 
 
-	public String txtWrite(MultipartFile BookFile,int lineNum,int numLine,int linePage){
+	public String txtWrite(MultipartFile bookFile,int lineNum,int numLine,int linePage){
 		String stord="D:/temp/";
-		String oldFileName=BookFile.getOriginalFilename();
+		String oldFileName=bookFile.getOriginalFilename();
 		BufferedReader br=null;
 		File destinationFile =null;
 		int numOfOneLine = 0;	
@@ -59,7 +59,7 @@ public class PdfServiceImpl implements PdfService{
 		destinationFile.mkdirs();
 	}
 		try {
-		BookFile.transferTo(new File(destinationDir + oldFileName+"/"+ oldFileName));
+		bookFile.transferTo(new File(destinationDir + oldFileName+"/"+ oldFileName));
 		br = new BufferedReader(new FileReader(destinationDir + oldFileName+"/"+ oldFileName)); //Read .txt file
 		if(numLine==0) {
 			numOfOneLine=30;
@@ -96,6 +96,7 @@ public class PdfServiceImpl implements PdfService{
 		br.close();
 		}catch (Exception e) {
 //			return "500";
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -270,6 +271,19 @@ public class PdfServiceImpl implements PdfService{
 			return "500";
 		}
 		return null;
+	}
+	
+	public void fileImg(MultipartFile fileImg, String fileName, String stordName) {
+		File file =new File("");
+		if(!file.exists()) {
+			file.mkdirs();
+		}
+		try {
+			fileImg.transferTo(new File(""));
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
 	}
 	
 }
