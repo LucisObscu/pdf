@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -37,10 +38,10 @@ public class PdfServiceImpl implements PdfService{
 		String error=null;
 		int line=fileDto.getLine();
 			if(line==1||line==2){
-				error=txtWrite(fileDto.getBookFile(),line,
+				error=txtWrite(fileDto.getBookFile(),fileDto.getBookImg(),line,
 						fileDto.getNumOfOneLine(),fileDto.getLineOfOnePage());
 			}else{
-				error=pdfWrite(fileDto.getBookFile());
+				error=pdfWrite(fileDto.getBookFile(),fileDto.getBookImg());
 			}
 		
 
@@ -48,24 +49,22 @@ public class PdfServiceImpl implements PdfService{
 	}
 
 
-	public String txtWrite(MultipartFile bookFile,int lineNum,int numLine,int linePage){
+	public String txtWrite(MultipartFile bookFile,MultipartFile bookImg,int lineNum,int numLine,int linePage){
+		String oldFileName=bookFile.getOriginalFilename();
+		String destinationDir = "D:/temp/Converted_txt/";
 		try {
 		String stord="D:/temp/";
-		String oldFileName=bookFile.getOriginalFilename();
+		
 		//BufferedReader br=null;
 		BufferedReader br=null;
 		File destinationFile =null;
-		int numOfOneLine = 0;	
+		int numOfOneLine = 0;
 		int lineOfOnePage = 0;
-		String destinationDir = "D:/temp/Converted_txt/";
-		System.out.println("aaaaaaaaaaaaaaaaaaaa"+oldFileName);
-		destinationFile = new File(destinationDir + oldFileName+"/"+ oldFileName);
-	if (destinationFile.isDirectory()) {
-
 		
-	}else {
-		destinationFile.mkdirs();
-	}
+		destinationFile = new File(destinationDir + oldFileName+"/"+ oldFileName);
+	if (!destinationFile.exists()) {
+		 destinationFile.mkdirs();
+		}
 //	Writer myWriter= new BufferedWriter(new OutputStreamWriter(
 //		    new FileOutputStream(oldFileName), "UTF-8"));
 //		try {
@@ -75,7 +74,7 @@ public class PdfServiceImpl implements PdfService{
 //		}
 		
 		bookFile.transferTo(new File(destinationDir + oldFileName+"/"+ oldFileName));
-		//br = new BufferedReader(new FileReader(destinationDir + oldFileName+"/"+ oldFileName)); //Read .txt file
+		//br = new BufferedReader(new FileReader(destinationDir + oldFileName+"/"+ oldFileName)); //Read .txt file  //"euc-kr"
 		br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(destinationDir + oldFileName+"/"+ oldFileName)),"euc-kr"));
 		if(numLine==0) {
 			numOfOneLine=30;
@@ -114,12 +113,14 @@ public class PdfServiceImpl implements PdfService{
 //			return "500";
 			e.printStackTrace();
 		}
+		fileImg(bookImg,oldFileName,destinationDir);
 		return null;
 	}
 	public static int write(int page, StringBuilder sb,String oldFileName) throws Exception{
 		if(sb.toString().equals("\r\n")) {System.out.println("\\r\\n");return page;}
 		if(sb.toString().equals("")) {System.out.println("space");return page;}
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File("D:/temp/Converted_txt/"+oldFileName+"/"+ page + oldFileName)),"euc-kr"));
+		//BufferedWriter bw = new BufferedWriter(new FileWriter(new File("D:/temp/Converted_txt/"+oldFileName+"/"+ page + oldFileName)));
 		String withoutLastEnter = sb.toString().substring(0, sb.toString().lastIndexOf("\r\n"));
 //		bw.write(withoutLastEnter);
 		Writer wit=bw;
@@ -132,7 +133,7 @@ public class PdfServiceImpl implements PdfService{
 		return page;
 	}
 	
-	public String pdfWrite(MultipartFile mFile) {
+	public String pdfWrite(MultipartFile mFile,MultipartFile bookImg) {
 		File destinationFile =null;
 		String sourceDir = "D:/temp/"; // Pdf files are read from this folder
 		String destinationDir = "D:/temp/Converted_PdfFiles_to_Image/"; // converted images from pdf document are
@@ -288,16 +289,24 @@ public class PdfServiceImpl implements PdfService{
 			destinationFile.delete();
 			return "500";
 		}
+		fileImg(bookImg,oldFileName,destinationDir);
 		return null;
 	}
 	
-	public void fileImg(MultipartFile fileImg, String fileName, String stordName) {
-		File file =new File("");
+	public void fileImg(MultipartFile fileImg, String oldFileName, String destinationDir) {
+		String oldFileNames=null;
+		if(oldFileName.contains(".txt")) {
+			oldFileNames=oldFileName.replace(".txt", "");
+		}else if(oldFileName.contains(".pdf")) {
+			oldFileNames=oldFileName.replace(".pdf", "");
+		}
+		String formatName = fileImg.getOriginalFilename().substring(fileImg.getOriginalFilename().lastIndexOf(".")+1);    
+		File file =new File(destinationDir+oldFileName+"/simg/"+oldFileNames+"."+formatName);
 		if(!file.exists()) {
 			file.mkdirs();
 		}
 		try {
-			fileImg.transferTo(new File(""));
+			fileImg.transferTo(new File(destinationDir+oldFileName+"/simg/"+oldFileNames+"."+formatName));
 		} catch (Exception e) {
 			// TODO: handle exception
 		}

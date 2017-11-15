@@ -130,25 +130,25 @@ function pageText(){
 
 
 <script>
-var upload = document.getElementsByName("hhh")[0],
-holder = document.getElementById('holder');
+	var upload = document.getElementsByName("bookImg")[0],
+	holder = document.getElementById('holder');
 
-upload.onchange = function (e) {
-e.preventDefault();
+	upload.onchange = function (e) {
+	e.preventDefault();
 
-var file = upload.files[0],
-  reader = new FileReader();
-reader.onload = function (event) {
-var img = new Image();
-img.src = event.target.result;
-img.width = 280;
-img.height = 412
-holder.innerHTML = '';
-holder.appendChild(img);
-};
-reader.readAsDataURL(file);
-return false;
-};
+	var file = upload.files[0],
+    reader = new FileReader();
+	reader.onload = function (event) {
+		var img = new Image();
+		img.src = event.target.result;
+		img.width = 280;
+		img.height = 412
+		holder.innerHTML = '';
+		holder.appendChild(img);
+		};
+	reader.readAsDataURL(file);
+	return false;
+	};
 </script>
 </body>
 </html>
