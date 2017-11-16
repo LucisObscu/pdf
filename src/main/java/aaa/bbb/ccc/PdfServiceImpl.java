@@ -99,13 +99,25 @@ public class PdfServiceImpl implements PdfService{
 		String line = br.readLine(); // Read one line
 		
 		while (line != null) { // While line is exist
-			if (line.length() <= numOfOneLine) {
+			if (line.length() <= numOfOneLine) {//길이가 3이하면 뒤에 엔터추가 하고  StringBuilder 에추가
 				sb.append(line + "\r\n");
 				line = br.readLine();	// Read next line when current line is lesser than numOfOneLine 
-			} else {
+			} else {//길이가 3이하가 아니면 길이가 3문자에 잘라서 엔터추가 StringBuilder 에추가 하고 나머지는 line 에초기화
 				sb.append(line.substring(0, numOfOneLine) + "\r\n");
 				line = line.substring(numOfOneLine); // Cut line and reunite
-			}
+			}//StringBuilder 에 엔터가 3이상이면 마지막에추가한 엔터값을 삭제하고 저장 및 StringBuilder 초기화 page++
+			
+			
+			
+//			if (line.length() <= numOfOneLine) {//길이가 3이하면 뒤에 엔터추가 하고  StringBuilder 에추가
+//				sb.append(line + "\r\n");
+//				line = br.readLine();	// Read next line when current line is lesser than numOfOneLine 
+//			} else {//길이가 3이하가 아니면 길이가 3문자에 잘라서 엔터추가 StringBuilder 에추가 하고 나머지는 line 에초기화
+//				sb.append(line.substring(0, numOfOneLine) + "\r\n");
+//				line = line.substring(numOfOneLine); // Cut line and reunite
+//			}//StringBuilder 에 엔터가 3이상이면 마지막에추가한 엔터값을 삭제하고 저장 및 StringBuilder 초기화 page++
+			
+			
 			numOfEnter = StringUtils.countOccurrencesOf(sb.toString(), "\r\n");
 			if(numOfEnter >= lineOfOnePage) {
 				page = write(page,sb,oldFileName); // Write and return the number of page for increase
@@ -128,9 +140,9 @@ public class PdfServiceImpl implements PdfService{
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File("D:/temp/Converted_txt/"+oldFileName+"/"+ page +".txt")),"euc-kr"));
 		//BufferedWriter bw = new BufferedWriter(new FileWriter(new File("D:/temp/Converted_txt/"+oldFileName+"/"+ page + oldFileName)));
 		String withoutLastEnter = sb.toString().substring(0, sb.toString().lastIndexOf("\r\n"));
-//		bw.write(withoutLastEnter);
-		Writer wit=bw;
-		wit.write(withoutLastEnter);
+		bw.write(withoutLastEnter);
+//		Writer wit=bw;
+//		wit.write(withoutLastEnter);
 		bw.flush();
 		bw.close();
 		System.out.println("sb : " + withoutLastEnter);

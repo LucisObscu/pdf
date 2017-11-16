@@ -4,8 +4,9 @@ import java.io.File;
 
 public class Test {
 	public static void main(String ar[]) {
-		FileEx fileEx = null;
-		File file = new File("C:/Users/OBSCU/Desktop/a");
-		fileEx.deleteWidthSubThings(file);
+		String a="1k2k3k4k5k6k7k8k9k";
+		int b=a.lastIndexOf("k");
+		String c=a.substring(0,b);
+		System.out.println(c);
 	}
 }
