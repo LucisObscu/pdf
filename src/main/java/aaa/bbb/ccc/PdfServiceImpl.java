@@ -1,5 +1,6 @@
 package aaa.bbb.ccc;
 
+
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -7,11 +8,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
@@ -25,16 +25,24 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.imgscalr.Scalr;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class PdfServiceImpl implements PdfService{
-
+	
 	@Override
 	public String check(PdfFileDto fileDto)throws Exception {
-//		Files.probeContentType()
+		//이미지 확장자 검사
+		if(!fileDto.getBookImg().isEmpty()){
+		String type =fileDto.getBookImg().getContentType();
+		String imageType=type.substring(type.lastIndexOf("/")+1);
+			if(!(imageType.equalsIgnoreCase("jpg")||imageType.equalsIgnoreCase("png")||imageType.equalsIgnoreCase("jpeg"))) {
+				return "500";
+			}
+		}
 		String error=null;
 		int line=fileDto.getLine();
 			if(line==1||line==2){
@@ -50,18 +58,16 @@ public class PdfServiceImpl implements PdfService{
 
 
 	public String txtWrite(MultipartFile bookFile,MultipartFile bookImg,int lineNum,int numLine,int linePage){
-		String oldFileName=bookFile.getOriginalFilename();
+		UUID uid = UUID.randomUUID(); 
+		String oldFileName=uid.toString()+"_"+bookFile.getOriginalFilename();
 		String destinationDir = "D:/temp/Converted_txt/";
-		try {
-		String stord="D:/temp/";
-		
-		//BufferedReader br=null;
 		BufferedReader br=null;
 		File destinationFile =null;
 		int numOfOneLine = 0;
 		int lineOfOnePage = 0;
 		
-		destinationFile = new File(destinationDir + oldFileName+"/"+ oldFileName);
+		destinationFile = new File(destinationDir + oldFileName);
+		try {
 	if (!destinationFile.exists()) {
 		 destinationFile.mkdirs();
 		}
@@ -72,10 +78,10 @@ public class PdfServiceImpl implements PdfService{
 //		} catch(Exception e){
 //		e.printStackTrace();
 //		}
-		
-		bookFile.transferTo(new File(destinationDir + oldFileName+"/"+ oldFileName));
+		new File(destinationDir + oldFileName+"/orgFile/"+ oldFileName).mkdirs();
+		bookFile.transferTo(new File(destinationDir + oldFileName+"/orgFile/"+ oldFileName));
 		//br = new BufferedReader(new FileReader(destinationDir + oldFileName+"/"+ oldFileName)); //Read .txt file  //"euc-kr"
-		br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(destinationDir + oldFileName+"/"+ oldFileName)),"euc-kr"));
+		br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(destinationDir + oldFileName+"/orgFile/"+ oldFileName)),"euc-kr"));
 		if(numLine==0) {
 			numOfOneLine=30;
 		}else {
@@ -110,8 +116,8 @@ public class PdfServiceImpl implements PdfService{
 		write(page,sb,oldFileName); // Write the left text 
 		br.close();
 		}catch (Exception e) {
-//			return "500";
-			e.printStackTrace();
+			allFileDelete(destinationFile);
+			return "500";
 		}
 		fileImg(bookImg,oldFileName,destinationDir);
 		return null;
@@ -119,7 +125,7 @@ public class PdfServiceImpl implements PdfService{
 	public static int write(int page, StringBuilder sb,String oldFileName) throws Exception{
 		if(sb.toString().equals("\r\n")) {System.out.println("\\r\\n");return page;}
 		if(sb.toString().equals("")) {System.out.println("space");return page;}
-		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File("D:/temp/Converted_txt/"+oldFileName+"/"+ page + oldFileName)),"euc-kr"));
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File("D:/temp/Converted_txt/"+oldFileName+"/"+ page +".txt")),"euc-kr"));
 		//BufferedWriter bw = new BufferedWriter(new FileWriter(new File("D:/temp/Converted_txt/"+oldFileName+"/"+ page + oldFileName)));
 		String withoutLastEnter = sb.toString().substring(0, sb.toString().lastIndexOf("\r\n"));
 //		bw.write(withoutLastEnter);
@@ -137,23 +143,24 @@ public class PdfServiceImpl implements PdfService{
 		File destinationFile =null;
 		String sourceDir = "D:/temp/"; // Pdf files are read from this folder
 		String destinationDir = "D:/temp/Converted_PdfFiles_to_Image/"; // converted images from pdf document are
-																		// saved here
-		String oldFileName = mFile.getOriginalFilename();
+		UUID uid = UUID.randomUUID();														// saved here
+		String oldFileName = uid.toString()+"_"+mFile.getOriginalFilename();
 		try {
+			destinationFile = new File(destinationDir + oldFileName);
+			//						D:/temp/Converted_PdfFiles_to_Image/+gameOfThrone.pdf
+		if (!destinationFile.exists()) {
+			destinationFile.mkdirs();
+			System.out.println("Folder Created -> " + destinationFile.getAbsolutePath());
+		}
 			
-			
-			mFile.transferTo(new File(sourceDir+oldFileName));
+		    new File(destinationDir+oldFileName+"/orgFile/"+oldFileName).mkdirs();
+			mFile.transferTo(new File(destinationDir+oldFileName+"/orgFile/"+oldFileName));//************************
 			Long startTime = System.currentTimeMillis();
 			System.out.println(startTime);
 
-			File sourceFile = new File(sourceDir + oldFileName);
+			File sourceFile = new File(destinationDir + oldFileName+"/orgFile/" + oldFileName);//************************
 			//							D:/temp/+gameOfThrone.pdf
-			destinationFile = new File(destinationDir + oldFileName);
-				//						D:/temp/Converted_PdfFiles_to_Image/+gameOfThrone.pdf
-			if (!destinationFile.exists()) {
-				destinationFile.mkdirs();
-				System.out.println("Folder Created -> " + destinationFile.getAbsolutePath());
-			}
+			
 			if (sourceFile.exists()) {
 				
 				System.out.println("Images copied to Folder: " + destinationFile.getName());
@@ -192,7 +199,7 @@ public class PdfServiceImpl implements PdfService{
 //					DataBufferInt imageByte = (DataBufferInt)bim.getData().getDataBuffer();
 //					int[] imageInt = imageByte.getData();
 				    FileOutputStream fos3 = new FileOutputStream(new File(
-							destinationDir + oldFileName + "/" + fileName + "_" + pageNumber + ".png"));
+							destinationDir + oldFileName + "/" + pageNumber + ".png"));
 					BufferedOutputStream bos3 = new BufferedOutputStream(fos3);
 //					bos3.write(imageByte);
 					bos3.write(imageInByte);
@@ -284,9 +291,7 @@ public class PdfServiceImpl implements PdfService{
 			}
 
 		} catch (Exception e) {
-			File file = new File(sourceDir + oldFileName);
-			file.delete();
-			destinationFile.delete();
+			allFileDelete(destinationFile);
 			return "500";
 		}
 		fileImg(bookImg,oldFileName,destinationDir);
@@ -294,6 +299,7 @@ public class PdfServiceImpl implements PdfService{
 	}
 	
 	public void fileImg(MultipartFile fileImg, String oldFileName, String destinationDir) {
+		if(!fileImg.isEmpty()) {
 		String oldFileNames=null;
 		if(oldFileName.contains(".txt")) {
 			oldFileNames=oldFileName.replace(".txt", "");
@@ -301,16 +307,41 @@ public class PdfServiceImpl implements PdfService{
 			oldFileNames=oldFileName.replace(".pdf", "");
 		}
 		String formatName = fileImg.getOriginalFilename().substring(fileImg.getOriginalFilename().lastIndexOf(".")+1);    
-		File file =new File(destinationDir+oldFileName+"/simg/"+oldFileNames+"."+formatName);
+		File file =new File(destinationDir+oldFileName+"/OriginImg/"+oldFileNames+"."+formatName);
 		if(!file.exists()) {
 			file.mkdirs();
 		}
 		try {
-			fileImg.transferTo(new File(destinationDir+oldFileName+"/simg/"+oldFileNames+"."+formatName));
+			fileImg.transferTo(new File(destinationDir+oldFileName+"/OriginImg/"+oldFileNames+"."+formatName));
+			BufferedImage sourceImg = ImageIO.read(new File(destinationDir+oldFileName+"/OriginImg/"+oldFileNames+"."+formatName));
+			BufferedImage destImg = Scalr.resize(sourceImg, 
+									Scalr.Method.AUTOMATIC, 
+										Scalr.Mode.FIT_TO_HEIGHT,280);   
+			String thumbnailName =	destinationDir+oldFileName+"/OriginImg/"+"s_"+oldFileNames+"."+formatName;   
+			File newFile = new File(thumbnailName);  
+			ImageIO.write(destImg, formatName.toUpperCase(), newFile);
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
 		}
 		
 	}
+	
+	public void allFileDelete(File file) { 
+		  if (file.isDirectory()) {   
+		   if (file.listFiles().length != 0) { 
+		    File[] fileList = file.listFiles();
+		    for (int i = 0; i < fileList.length; i++) {
+		    	allFileDelete(fileList[i]);
+		     file.delete();
+		    }
+		   } else {
+		    file.delete();
+		   }
+		  } else {
+		   file.delete();
+		  }
+		 }
 	
 }

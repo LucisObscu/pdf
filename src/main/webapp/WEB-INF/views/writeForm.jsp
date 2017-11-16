@@ -25,26 +25,35 @@ function fileCheck(frm) {
   var fileImg = frm.bookImg.value;
   var FileImgFilter = /\.(jpg|png|jpeg)$/i;
   var extImgArray = new Array(".jpg", ".png",".jpeg");   
-    
+  var bSubmitImgCheck = false;
+  
   if( !file ){ 
     alert( "파일을 선택하여 주세요!");
     return;
-  }else if(!fileImg){
-	  alert( "이미지 파일을 선택하여 주세요!");
-	    return;
   }
   
-  if( frm.bookFile.value.match(FileFilter)&&frm.bookImg.value.match(FileImgFilter))
+  if( frm.bookFile.value.match(FileFilter))
   { 
-    bSubmitCheck = true;
+      bSubmitCheck = true;
   }
+  
+  if(fileImg){
+	  if(frm.bookImg.value.match(FileImgFilter)){
+		  
+	  }else{
+		  alert("이미지는 다음 파일만 업로드가 가능합니다.\n\n 파일:"  + (extImgArray.join("  ")) + "\n\n 업로드할 파일을 "
+				     + " 다시 선택하여 주세요.");
+		  return;
+	  }
+  }
+  
   
   
   if (bSubmitCheck) {
      alert("파일 업로드를 시작합니다.");
      frm.submit(); 
    } else {
-     alert("다음 파일만 업로드가 가능합니다.\n\n 파일:"  + (extArray.join("  ")) +"\n\n이미지파일:"  + (extImgArray.join("  ")) + "\n\n 업로드할 파일을 "
+     alert("다음 파일만 업로드가 가능합니다.\n\n 파일:"  + (extArray.join("  ")) + "\n\n 업로드할 파일을 "
      + " 다시 선택하여 주세요.");
    }
 
